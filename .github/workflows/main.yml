@@ -1,0 +1,27 @@
+name: CI/CD Workflow  # Workflow 的名称
+
+on:  # 触发条件
+  push:  # 当代码推送到仓库时触发
+    branches: [ main ] # 指定分支，例如 main 分支
+  pull_request: # 当创建或更新 Pull Request 时触发
+    branches: [ main ]
+
+jobs:  # 定义要执行的任务
+  build:  # 任务的名称
+    runs-on: ubuntu-latest  # 运行环境
+    steps:  # 执行的步骤
+      - uses: actions/checkout@v3 # 获取仓库代码
+      - name: Install dependencies
+        run: npm install  # 安装依赖
+      - name: Build
+        run: npm run build # 构建项目
+      - name: Test
+        run: npm test  # 运行测试
+      - name: Deploy
+        run:  # 部署命令，例如使用 Wrangler 部署到 Cloudflare Workers
+          wrangler publish
+          env:
+            CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+            CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+
